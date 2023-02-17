@@ -107,7 +107,7 @@ class Realdiscount:
         if status=='applied':return {
             'uses_remaining':json_data['purchase']['data']['pricing_result']['campaign']['uses_remaining'],
             'real_price':json_data['purchase']['data']['pricing_result']['list_price']['amount'],
-            'end_time':json_data['discount_expiration']['data']['discount_deadline_text']
+            'end_time':[json_data['discount_expiration']['data']['discount_deadline_text'] if json_data.get('discount_expiration') else ''][0]
         }
 
 
@@ -162,7 +162,9 @@ class Realdiscount:
             result_page =self.request_resource('https://www.udemy.com/payment/checkout-submit/', data=json.dumps(common_data), headers={'User-Agent': self.useragent, 'Content-Type': 'application/json;charset=utf-8'}, cookies={'access_token': self.accesstoken, 'dj_session_id': self.sessionid}, method='POST')
             result_json =result_page.json()
             if result_json.get('status')=='succeeded':update ='Succeeded'
-            else:update ='Failed'
+            else:
+                update ='Failed'
+                if 'You do not have permission to perform this action' in result_json.get('detail'): raise Exception('Enroll Fail, Session id Expired...\n')
             if not result_json.get('status')=='succeeded':print(result_json)
         except json.JSONDecodeError:
             if result_page.status_code==504:update ='Succeeded'
@@ -175,7 +177,7 @@ class Realdiscount:
         delta =dt.timedelta(hours=self.isthour, minutes=self.istminute)
         date =(date+delta).date()
         for data in coupon_datas:
-            query+=f''' (null, "{data[0]}", {data[1]}, "{data[2]}", "{data[3]}", {data[4]}, "{date.year}-{date.month}-{date.day}", {'"'+data[5]+'"' if data[6] else "null"}, {data[6] if data[6] else "null"}),'''
+            query+=f''' (null, "{data[0]}", {data[1]}, "{data[2]}", "{data[3]}", {data[4]}, "{date.year}-{date.month}-{date.day}", {'"'+data[5]+'"' if data[6] and data[5] else "null"}, {data[6] if data[6] else "null"}),'''
         query =query[:-1]
         return db.query(query)
 
@@ -243,7 +245,7 @@ class Realdiscount:
             print('\n\n> Courses Not Valid For Enrolling..\n')
             if wast_offers:
                 if self.make_cache(db, db_table, wast_offers): print('> Success, Enrolled and Expired Datas Updated...\n')
-                else: raise Exception('> Fail, Enrolled and Expired Datas Update...\n')
+                else: raise Exception('Fail, Enrolled and Expired Datas Update...\n')
             else: print('> No Datas For Update...\n')
             return 1
 
@@ -262,16 +264,17 @@ class Realdiscount:
         for status in total_status:
             if status != 'Succeeded':
                 if self.make_cache(db, db_table, wast_offers): print('> Success, Enrolled and Expired Datas Updated...\n')
-                else: raise Exception('> Fail, Enrolled and Expired Datas Update...\n')
+                else: raise Exception('Fail, Enrolled and Expired Datas Update...\n')
                 return 0
         else:
             if self.make_cache(db, db_table, wast_offers+avail_offers): print('> Success, Datas Updated...\n')
-            else: raise Exception('> Fail, Datas Update...\n')
+            else: raise Exception('Fail, Datas Update...\n')
         return 1
 
 def main():
     infinity_db =Infinitydatabase(os.environ['DB_ADMIN_URL'])
-    rdiscount =Realdiscount(os.environ['ACCESS_TOKEN'], os.environ['SESSION_ID'], os.environ['FROM_DAY'], os.environ['TO_DAY'], os.environ['REQUESTS_LIMIT'], os.environ['ENROLLS_LIMIT'])
+    rdiscount =Realdiscount(os.environ['ACCESS_TOKEN'], os.environ['SESSION_ID'], int(os.environ['FROM_DAY']),
+        int(os.environ['TO_DAY']), int(os.environ['REQUESTS_LIMIT']), int(os.environ['ENROLLS_LIMIT']))
     while True:
         if rdiscount.realdiscount(infinity_db, os.environ['DB_TABLE_NAME']): break
 
