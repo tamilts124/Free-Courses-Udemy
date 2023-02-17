@@ -144,7 +144,7 @@ class Realdiscount:
                 wast_offers.append(coupon_data)
         else:
             update ='Expired'
-            for data in [course_name, course_id, coupon_code, update, int(result_json['real_price'] if result_json['real_price'] else 0), '', 0]: coupon_data.append(data)
+            for data in [course_name, course_id, coupon_code, update, int(result_json['real_price'] if result_json else 0), '', 0]: coupon_data.append(data)
             wast_offers.append(coupon_data)
         thread[0] -=1
         print(course_title+f' [{update}]')
