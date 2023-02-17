@@ -28,6 +28,7 @@ class Infinitydatabase:
         self.data ={
             'ajax_request':True,
             'ajax_page_request':True,
+            'session_max_rows':10000,
             'pftext':'F',
             'sql_query':'',
             'server':self.server,
@@ -63,14 +64,14 @@ class Infinitydatabase:
 
 class Realdiscount:
 
-    def __init__(self, accesstoken, sessionid, fromday=0, today=1):
+    def __init__(self, accesstoken, sessionid, fromday=0, today=1, requests_limit=10, enrolls_limit=30):
         self.accesstoken =accesstoken
         self.sessionid =sessionid
         self.fromday =fromday
         self.today =today
         self.useragent ='Mozilla/5.0 (X11; Windows x86_64; rv:102.0) Gecko/20100101 Firefox/102.0'
-        self.requests_limit =int(os.environ['REQUESTS_LIMIT'])
-        self.enrolls_limit =int(os.environ['ENROLLS_LIMIT'])
+        self.requests_limit =requests_limit
+        self.enrolls_limit =enrolls_limit
         self.isthour =5
         self.istminute =30
 
@@ -144,7 +145,7 @@ class Realdiscount:
                 wast_offers.append(coupon_data)
         else:
             update ='Expired'
-            for data in [course_name, course_id, coupon_code, update, int(result_json['real_price'] if result_json else 0), '', 0]: coupon_data.append(data)
+            for data in [course_name, course_id, coupon_code, update, int(result_json.get('real_price', 0) if result_json else 0), '', 0]: coupon_data.append(data)
             wast_offers.append(coupon_data)
         thread[0] -=1
         print(course_title+f' [{update}]')
@@ -242,7 +243,7 @@ class Realdiscount:
             print('\n\n> Courses Not Valid For Enrolling..\n')
             if wast_offers:
                 if self.make_cache(db, db_table, wast_offers): print('> Success, Enrolled and Expired Datas Updated...\n')
-                else: print('> Fail, Enrolled and Expired Datas Update...\n')
+                else: raise Exception('> Fail, Enrolled and Expired Datas Update...\n')
             else: print('> No Datas For Update...\n')
             return 1
 
@@ -261,17 +262,16 @@ class Realdiscount:
         for status in total_status:
             if status != 'Succeeded':
                 if self.make_cache(db, db_table, wast_offers): print('> Success, Enrolled and Expired Datas Updated...\n')
-                else: print('> Fail, Enrolled and Expired Datas Update...\n')
+                else: raise Exception('> Fail, Enrolled and Expired Datas Update...\n')
                 return 0
         else:
             if self.make_cache(db, db_table, wast_offers+avail_offers): print('> Success, Datas Updated...\n')
-            else: print('> Fail, Datas Update...\n')
+            else: raise Exception('> Fail, Datas Update...\n')
         return 1
-
 
 def main():
     infinity_db =Infinitydatabase(os.environ['DB_ADMIN_URL'])
-    rdiscount =Realdiscount(os.environ['ACCESS_TOKEN'], os.environ['SESSION_ID'], int(os.environ['FROM_DAY']), int(os.environ['TO_DAY']))
+    rdiscount =Realdiscount(os.environ['ACCESS_TOKEN'], os.environ['SESSION_ID'], os.environ['FROM_DAY'], os.environ['TO_DAY'], os.environ['REQUESTS_LIMIT'], os.environ['ENROLLS_LIMIT'])
     while True:
         if rdiscount.realdiscount(infinity_db, os.environ['DB_TABLE_NAME']): break
 
