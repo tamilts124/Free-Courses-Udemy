@@ -23,12 +23,27 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+      - name: "Setting up Python"
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
 
       # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+      - name: Installing Requirements
+        run: | 
+          python -m pip install --upgrade pip
+          pip install bs4 requests
+      
+      - name: "Running Python Script"  
+        env:
+          ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
+          SESSION_ID: ${{secrets.SESSION_ID}}
+          FROM_DAY: ${{secrets.FROM_DAY}}
+          TO_DAY: ${{secrets.TO_DAY}}
+          REQUESTS_LIMIT: ${{secrets.REQUESTS_LIMIT}}
+          ENROLLS_LIMIT: ${{secrets.ENROLLS_LIMIT}}
+          DB_ADMIN_URL: ${{secrets.DB_ADMIN_URL}}
+          DB_TABLE_NAME: ${{secrets.DB_TABLE_NAME}}
+        run: python main.py
+      
+      
