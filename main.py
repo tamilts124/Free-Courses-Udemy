@@ -270,6 +270,7 @@ class Realdiscount:
 
 
 def main():
+    print(os.environ['DB_ADMIN_URL'])
     infinity_db =Infinitydatabase(os.environ['DB_ADMIN_URL'])
     rdiscount =Realdiscount(os.environ['ACCESS_TOKEN'], os.environ['SESSION_ID'], int(os.environ['FROM_DAY']), int(os.environ['TO_DAY']))
     while True:
