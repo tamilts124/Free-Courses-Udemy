@@ -182,7 +182,7 @@ class Realdiscount:
         date =dt.datetime.now()
         delta =dt.timedelta(hours=self.isthour, minutes=self.istminute)
         date =(date+delta).date()
-        query =f'select CourseName, CouponCode from {db_table} where DateOfCheck="{date}"'
+        query =f'select CourseName, CouponCode from {db_table} where DateOfCheck="{date.year}-{date.month}-{date.day}"'
         coupon_datas =db.query(query)['row']
         if coupon_datas:
             old_datas =[]
