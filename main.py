@@ -69,8 +69,8 @@ class Realdiscount:
         self.fromday =fromday
         self.today =today
         self.useragent ='Mozilla/5.0 (X11; Windows x86_64; rv:102.0) Gecko/20100101 Firefox/102.0'
-        self.requests_limit =int(os.environ['REQUESTS_LIMIT'])
-        self.enrolls_limit =int(os.environ['ENROLLS_LIMIT'])
+        self.requests_limit =os.environ['REQUESTS_LIMIT']
+        self.enrolls_limit =os.environ['ENROLLS_LIMIT']
         self.isthour =5
         self.istminute =30
 
@@ -270,9 +270,8 @@ class Realdiscount:
 
 
 def main():
-    print(os.environ['DB_ADMIN_URL'])
     infinity_db =Infinitydatabase(os.environ['DB_ADMIN_URL'])
-    rdiscount =Realdiscount(os.environ['ACCESS_TOKEN'], os.environ['SESSION_ID'], int(os.environ['FROM_DAY']), int(os.environ['TO_DAY']))
+    rdiscount =Realdiscount(os.environ['ACCESS_TOKEN'], os.environ['SESSION_ID'], os.environ['FROM_DAY'], os.environ['TO_DAY'])
     while True:
         if rdiscount.realdiscount(infinity_db, os.environ['DB_TABLE_NAME']): break
 
