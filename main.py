@@ -192,7 +192,7 @@ class Realdiscount:
 
     def get_cache(self, db, db_table):
         date =self.getreal_date().date()
-        query =f'select CourseName, CouponCode from {db_table} where DateOfCheck="{date.year}-{date.month}-{date.day}"'
+        query =f'select CourseName, CouponCode from {db_table} where DateOfCheck="{date.strftime(r"%Y-%m-%d")}"'
         coupon_datas =db.query(query)['row']
         if coupon_datas:
             old_datas =[]
