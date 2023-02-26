@@ -172,7 +172,7 @@ class Realdiscount:
         time =day.time()
         result =db.query(f'select Times from {notify_table} where place="{Place}" and level="{Level}" and info="{Info}"')
         row =result['row']
-        if row: times =row[0][0]; query =f'update {notify_table} set ToDate="{date.strftime(r"%Y-%m-%d")}" and ToTime="{time.strftime("%H:%M %p")}" and Times={int(times)+1} and Notify=true'
+        if row: times =row[0][0]; query =f'update {notify_table} set ToDate="{date.strftime(r"%Y-%m-%d")}", ToTime="{time.strftime("%H:%M %p")}", Times={int(times)+1}, Notify=true'
         else: query =f'insert into {notify_table} (Place, Level, FromDate, FromTime, Info) values ("{Place}", "{Level}", "{date.strftime(r"%Y-%m-%d")}", "{time.strftime("%H:%M %p")}", "{Info}")'
         return db.query(query)
 
