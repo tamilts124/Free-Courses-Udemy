@@ -10,7 +10,7 @@ class Infinitydatabase:
         self.adminurl =adminurl
         self.host =adminurl.split('login')[0]
         self.db =self.adminurl.split('db=')[1]
-        self.display_response =['select', 'show', 'desc']
+        self.display_response =['select ', 'show ', 'desc']
         self.session =requests.Session()
         self.headers ={
             'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0',
@@ -38,27 +38,20 @@ class Infinitydatabase:
 
     def query(self, query):
         self.data['sql_query'] =query.strip(' \n\t')
-        response =self.session.post(self.host+'sql.php', data =self.data)
-        result =response.json()
-        if [True for s in self.display_response if self.data['sql_query'].lower().startswith(s)] and result['success']: return self.display_query_response(response)
-        elif result['success']: return 1
-        else: return 0
+        result =self.session.post(self.host+'sql.php', data =self.data).json()#, proxies={'http': 'http://127.0.0.1:8080'}).json()
+        if [True for s in self.display_response if self.data['sql_query'].lower().startswith(s)] and result['success']: return self.display_query_response(result.get('message'))
+        elif result['success']: return True
+        else: return False
     
-    def display_query_response(self, response):
-        result =response.text
+    def display_query_response(self, result):
         table ={'column':[], 'row':[]}
-
-        for column in result.split('data-column=\\"')[1:]:
-            column =column.split('\\"')[0]
-            table['column'].append(column)
-        
-        datas =result.split('<tr ')[1:]
-        if not datas: return table
-        if 'tr>' in datas[-1]: datas[-1] =datas[-1].split('tr>')[0]
-        for data in datas:
+        html =BeautifulSoup(result, 'html.parser')
+        for tag in html.find_all():
+            if tag.has_attr('data-column'): table['column'].append(tag.text.strip(' \n'))
+        for r in html.find_all('tr'):
             row =[]
-            for rowdata in data.split('<td data-decimals=')[1:]:
-                row.append(rowdata.split('>')[1].split('<')[0])
+            for tag in r.find_all():
+                if tag.has_attr('data-decimals'): row.append(tag.text.strip(' \n'))
             if row: table['row'].append(row)
         return table
 
@@ -151,7 +144,7 @@ class Realdiscount:
         print(course_title+f' [{update}]')
         coupon_data.append(course_title)
 
-    def enroll_course(self, courses):
+    def enroll_course(self, db, db_notify, courses):
         try:
             common_data ={
                 "checkout_environment":"Marketplace",
@@ -164,27 +157,41 @@ class Realdiscount:
             if result_json.get('status')=='succeeded':update ='Succeeded'
             else:
                 update ='Failed'
-                if 'You do not have permission to perform this action' in result_json.get('detail'): raise Exception('Enroll Fail, Session id Expired...\n')
+                if 'You do not have permission to perform this action' in result_json.get('detail'):
+                    self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Error-Critical", "Enroll Failed, Session id or Access Token is Expired")
+                    raise Exception('Enroll Fail, Session id or Access Token is Expired...\n')
             if not result_json.get('status')=='succeeded':print(result_json)
         except json.JSONDecodeError:
             if result_page.status_code==504:update ='Succeeded'
             else:print(result_page.text);update ='Error'
         return update
+    
+    def send_Notify(self, db, notify_table, Place, Level, Info):
+        day =self.getreal_date()
+        date =day.date()
+        time =day.time()
+        result =db.query(f'select Times from {notify_table} where place="{Place}" and level="{Level}" and info="{Info}"')
+        row =result['row']
+        if row: times =row[0][0]; query =f'update {notify_table} set ToDate="{date.strftime(r"%Y-%m-%d")}" and ToTime="{time.strftime("%H:%M %p")}" and Times={int(times)+1} and Notify=true'
+        else: query =f'insert into {notify_table} (Place, Level, FromDate, FromTime, Info) values ("{Place}", "{Level}", "{date.strftime(r"%Y-%m-%d")}", "{time.strftime("%H:%M %p")}", "{Info}")'
+        return db.query(query)
+
+    def getreal_date(self):
+        date =dt.datetime.now()
+        delta =dt.timedelta(hours=self.isthour, minutes=self.istminute)
+        date =(date+delta)
+        return date
 
     def make_cache(self, db, db_table, coupon_datas):
         query =f'insert into {db_table} values'
-        date =dt.datetime.now()
-        delta =dt.timedelta(hours=self.isthour, minutes=self.istminute)
-        date =(date+delta).date()
+        date =self.getreal_date().date()
         for data in coupon_datas:
-            query+=f''' (null, "{data[0]}", {data[1]}, "{data[2]}", "{data[3]}", {data[4]}, "{date.year}-{date.month}-{date.day}", {'"'+data[5]+'"' if data[6] and data[5] else "null"}, {data[6] if data[6] else "null"}),'''
+            query+=f''' (null, "{data[0]}", {data[1]}, "{data[2]}", "{data[3]}", {data[4]}, "{date.strftime(r"%Y-%m-%d")}", {'"'+data[5]+'"' if data[6] and data[5] else "null"}, {data[6] if data[6] else "null"}),'''
         query =query[:-1]
         return db.query(query)
 
     def get_cache(self, db, db_table):
-        date =dt.datetime.now()
-        delta =dt.timedelta(hours=self.isthour, minutes=self.istminute)
-        date =(date+delta).date()
+        date =self.getreal_date().date()
         query =f'select CourseName, CouponCode from {db_table} where DateOfCheck="{date.year}-{date.month}-{date.day}"'
         coupon_datas =db.query(query)['row']
         if coupon_datas:
@@ -194,7 +201,7 @@ class Realdiscount:
             return old_datas
         return []
 
-    def realdiscount(self, db, db_table):
+    def realdiscount(self, db, db_table, db_notify):
         old_coupons =self.get_cache(db, db_table)
         print('\n> Collecting Offers Pages...\n')
         anger_tags =BeautifulSoup(self.request_resource('https://www.real.discount/articles/').text, 'html.parser').findAll('a')
@@ -225,6 +232,7 @@ class Realdiscount:
                 if len(coupon_datas)+len(wrong_datas)==len(offer_links): break
 
         if not coupon_datas:
+            self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Info-High", "No Free Courses Available Now")
             print('> Free Course Offers Not Found..\n')
             return 1
         
@@ -244,9 +252,15 @@ class Realdiscount:
         if not avail_offers:
             print('\n\n> Courses Not Valid For Enrolling..\n')
             if wast_offers:
-                if self.make_cache(db, db_table, wast_offers): print('> Success, Enrolled and Expired Datas Updated...\n')
-                else: raise Exception('Fail, Enrolled and Expired Datas Update...\n')
-            else: print('> No Datas For Update...\n')
+                if self.make_cache(db, db_table, wast_offers):
+                    self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Info-Low", "Success, Enrolled and Expired Datas Updated, But No Free Courses Available Now")
+                    print('> Success, Enrolled and Expired Datas Updated...\n')
+                else:
+                    self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Error-High", "Failed, Enrolled and Expired datas Update to Database")
+                    raise Exception('Fail, Enrolled and Expired Datas Update...\n')
+            else:
+                self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Info-Normal", "No Datas Available for Update to Database")
+                print('> No Datas For Update...\n')
             return 1
 
         print('\n\n> Valid Courses..\n')
@@ -256,19 +270,25 @@ class Realdiscount:
         total_bundle =len(final_offers)//bundle_size
         remaining =len(final_offers)%bundle_size
         total_status =[]
-        for bundle in range(1, total_bundle+1): total_status.append(self.enroll_course(final_offers[bundle_size*bundle-bundle_size:bundle_size*bundle]))
+        for bundle in range(1, total_bundle+1): total_status.append(self.enroll_course(db, db_notify, final_offers[bundle_size*bundle-bundle_size:bundle_size*bundle]))
         else:
-            if total_bundle and remaining:total_status.append(self.enroll_course(final_offers[bundle_size*total_bundle:]))
-            elif not total_bundle and remaining:total_status.append(self.enroll_course(final_offers))
+            if total_bundle and remaining:total_status.append(self.enroll_course(db, db_notify, final_offers[bundle_size*total_bundle:]))
+            elif not total_bundle and remaining:total_status.append(self.enroll_course(db, db_notify, final_offers))
         print(f"> Total Courses: {len(final_offers)}, Status: {total_status}\n")
         for status in total_status:
             if status != 'Succeeded':
-                if self.make_cache(db, db_table, wast_offers): print('> Success, Enrolled and Expired Datas Updated...\n')
-                else: raise Exception('Fail, Enrolled and Expired Datas Update...\n')
+                if self.make_cache(db, db_table, wast_offers):
+                    self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Info-High", "Success, Enrolled and Expired datas Update to Database, The Program Refetching the Courses for Try To Again Enroll")
+                    print('> Success, Enrolled and Expired Datas Updated...\n')
+                else:
+                    self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Error-High", "Failed, Enrolled and Expired datas Update to Database, The Program Refetching the Courses for Try To Again Enroll")
+                    raise Exception('Fail, Enrolled and Expired Datas Update...\n')
                 return 0
         else:
             if self.make_cache(db, db_table, wast_offers+avail_offers): print('> Success, Datas Updated...\n')
-            else: raise Exception('Fail, Datas Update...\n')
+            else:
+                self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Error-High", "Failed, All datas Update to Database")
+                raise Exception('Fail, Datas Update...\n')
         return 1
 
 def main():
@@ -276,7 +296,7 @@ def main():
     rdiscount =Realdiscount(os.environ['ACCESS_TOKEN'], os.environ['SESSION_ID'], int(os.environ['FROM_DAY']),
         int(os.environ['TO_DAY']), int(os.environ['REQUESTS_LIMIT']), int(os.environ['ENROLLS_LIMIT']))
     while True:
-        if rdiscount.realdiscount(infinity_db, os.environ['DB_TABLE_NAME']): break
+        if rdiscount.realdiscount(infinity_db, os.environ['DB_TABLE_NAME'], os.environ['DB_TABLE_NOTIFY']): break
 
 if __name__ == '__main__':
     main()
