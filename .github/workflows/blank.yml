@@ -47,6 +47,7 @@ jobs:
           ENROLLS_LIMIT: ${{secrets.ENROLLS_LIMIT}}
           DB_ADMIN_URL: ${{secrets.DB_ADMIN_URL}}
           DB_TABLE_NAME: ${{secrets.DB_TABLE_NAME}}
+          DB_TABLE_NOTIFY: ${{secrets.DB_TABLE_NOTIFY}}
         run: python main.py
       
       
