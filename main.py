@@ -232,7 +232,7 @@ class Realdiscount:
                 if len(coupon_datas)+len(wrong_datas)==len(offer_links): break
 
         if not coupon_datas:
-            self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Info-High", "No Free Courses Available Now")
+            self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Info-High", "No Free Courses Available")
             print('> Free Course Offers Not Found..\n')
             return 1
         
@@ -253,7 +253,7 @@ class Realdiscount:
             print('\n\n> Courses Not Valid For Enrolling..\n')
             if wast_offers:
                 if self.make_cache(db, db_table, wast_offers):
-                    self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Info-Low", "Success, Enrolled and Expired Datas Updated, But No Free Courses Available Now")
+                    self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Info-Low", "Success, Enrolled and Expired Datas Updated, But No Free Courses Available")
                     print('> Success, Enrolled and Expired Datas Updated...\n')
                 else:
                     self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Error-High", "Failed, Enrolled and Expired datas Update to Database")
@@ -285,7 +285,9 @@ class Realdiscount:
                     raise Exception('Fail, Enrolled and Expired Datas Update...\n')
                 return 0
         else:
-            if self.make_cache(db, db_table, wast_offers+avail_offers): print('> Success, Datas Updated...\n')
+            if self.make_cache(db, db_table, wast_offers+avail_offers):
+                self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Info-Normal", f"Success, datas Updated to Database, {len(final_offers)} Courses Enrolled")
+                print('> Success, Datas Updated...\n')
             else:
                 self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Error-High", "Failed, All datas Update to Database")
                 raise Exception('Fail, Datas Update...\n')
