@@ -170,10 +170,12 @@ class Realdiscount:
         day =self.getreal_date()
         date =day.date()
         time =day.time()
-        result =db.query(f'select Times from {notify_table} where place="{Place}" and level="{Level}" and info="{Info}"')
+        result =db.query(f'select Times, NewDate, NewTime from {notify_table} where place="{Place}" and level="{Level}" and info="{Info}"')
         row =result['row']
-        if row: times =row[0][0]; query =f'update {notify_table} set ToDate="{date.strftime(r"%Y-%m-%d")}", ToTime="{time.strftime("%H:%M %p")}", Times={int(times)+1}, Notify=true where place="{Place}" and level="{Level}" and info="{Info}"'
-        else: query =f'insert into {notify_table} (Place, Level, FromDate, FromTime, Info) values ("{Place}", "{Level}", "{date.strftime(r"%Y-%m-%d")}", "{time.strftime("%H:%M %p")}", "{Info}")'
+        if row:
+            times =row[0][0]; olddate =row[0][1]; oldtime =row[0][2]
+            query =f'update {notify_table} set NewDate="{date.strftime(r"%Y-%m-%d")}", OldDate="{olddate}", NewTime="{time.strftime("%H:%M %p")}", OldTime="{oldtime}", Times={int(times)+1}, Notify=true where place="{Place}" and level="{Level}" and info="{Info}"'
+        else: query =f'insert into {notify_table} (Place, Level, NewDate, NewTime, Info) values ("{Place}", "{Level}", "{date.strftime(r"%Y-%m-%d")}", "{time.strftime("%H:%M %p")}", "{Info}")'
         return db.query(query)
 
     def getreal_date(self):
