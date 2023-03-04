@@ -167,10 +167,10 @@ class Realdiscount:
             if result_json.get('status')=='succeeded':update ='Succeeded'
             else:
                 update ='Failed'
-                if 'You do not have permission to perform this action' in result_json.get('detail'):
+                if 'You do not have permission to perform this action' in result_json.get('detail', ''):
                     self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Error-Critical", "Enroll Failed, Session id or Access Token is Expired")
                     raise Exception('Enroll Fail, Session id or Access Token is Expired...\n')
-            if not result_json.get('status')=='succeeded': self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Error-UnKnown", result_json)
+            if not result_json.get('status')=='succeeded': self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Error-UnKnown", "UnKnown Error")
         except json.JSONDecodeError:
             if result_page.status_code==504:update ='Succeeded'
             else:print(result_page.text);update ='Error'
