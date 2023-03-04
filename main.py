@@ -57,9 +57,10 @@ class Infinitydatabase:
 
 class Realdiscount:
 
-    def __init__(self, accesstoken, sessionid, fromday=0, today=1, requests_limit=10, enrolls_limit=30):
+    def __init__(self, accesstoken, sessionid, ignore_accounts, fromday=0, today=1, requests_limit=10, enrolls_limit=30):
         self.accesstoken =accesstoken
         self.sessionid =sessionid
+        self.ignoreaccounts =ignore_accounts.split()
         self.fromday =fromday
         self.today =today
         self.useragent ='Mozilla/5.0 (X11; Windows x86_64; rv:102.0) Gecko/20100101 Firefox/102.0'
@@ -124,17 +125,26 @@ class Realdiscount:
         if result_json and result_json.get('uses_remaining'):
             result_page =self.request_resource(f'https://www.udemy.com/api-2.0/courses/{course_id}/subscriber-curriculum-items/', headers={'User-Agent': self.useragent}, cookies={'access_token': self.accesstoken})
             if result_page.status_code==403 and not result_page.text.lower()=='resource not found':
-                update ='Available'
-                final_offers.append({
-                        "discountInfo":{"code":coupon_code},
-                        "price":{"amount":0,"currency":"INR"},
-                        "buyable":{"id":course_id,"type":"course"}
-                })
-                for data in [course_name, course_id, coupon_code, update, int(result_json.get('real_price')), result_json.get('end_time'), result_json['uses_remaining']]: coupon_data.append(data)
-                avail_offers.append(coupon_data)
+                assign_avail =True
+                for accesstoken in self.ignoreaccounts:
+                    result_page =self.request_resource(f'https://www.udemy.com/api-2.0/courses/{course_id}/subscriber-curriculum-items/', headers={'User-Agent': self.useragent}, cookies={'access_token': accesstoken})
+                    if result_page.status_code!=403: assign_avail =False
+                if assign_avail:
+                    update ='Available'
+                    final_offers.append({
+                            "discountInfo":{"code":coupon_code},
+                            "price":{"amount":0,"currency":"INR"},
+                            "buyable":{"id":course_id,"type":"course"}
+                    })
+                    for data in [course_name, course_id, coupon_code, update, int(result_json.get('real_price')), result_json.get('end_time'), result_json['uses_remaining']]: coupon_data.append(data)
+                    avail_offers.append(coupon_data)
+                else:
+                    update ='Enrolled'
+                    for data in [course_name, course_id, coupon_code, update, int(result_json.get('real_price', 0)), result_json.get('end_time'), result_json.get('uses_remaining')]: coupon_data.append(data)
+                    wast_offers.append(coupon_data)    
             else:
                 update ='Enrolled'
-                for data in [course_name, course_id, coupon_code, update, int(result_json.get('real_price', 0)), result_json.get('end_time', ''), result_json.get('uses_remaining')]: coupon_data.append(data)
+                for data in [course_name, course_id, coupon_code, update, int(result_json.get('real_price', 0)), result_json.get('end_time'), result_json.get('uses_remaining')]: coupon_data.append(data)
                 wast_offers.append(coupon_data)
         else:
             update ='Expired'
@@ -160,7 +170,7 @@ class Realdiscount:
                 if 'You do not have permission to perform this action' in result_json.get('detail'):
                     self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Error-Critical", "Enroll Failed, Session id or Access Token is Expired")
                     raise Exception('Enroll Fail, Session id or Access Token is Expired...\n')
-            if not result_json.get('status')=='succeeded':print(result_json)
+            if not result_json.get('status')=='succeeded': self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Error-UnKnown", result_json)
         except json.JSONDecodeError:
             if result_page.status_code==504:update ='Succeeded'
             else:print(result_page.text);update ='Error'
@@ -297,8 +307,8 @@ class Realdiscount:
 
 def main():
     infinity_db =Infinitydatabase(os.environ['DB_ADMIN_URL'])
-    rdiscount =Realdiscount(os.environ['ACCESS_TOKEN'], os.environ['SESSION_ID'], int(os.environ['FROM_DAY']),
-        int(os.environ['TO_DAY']), int(os.environ['REQUESTS_LIMIT']), int(os.environ['ENROLLS_LIMIT']))
+    rdiscount =Realdiscount(os.environ['ACCESS_TOKEN'], os.environ['SESSION_ID'], os.environ['IGNORE_ACCESSTOKEN'],
+        int(os.environ['FROM_DAY']), int(os.environ['TO_DAY']), int(os.environ['REQUESTS_LIMIT']), int(os.environ['ENROLLS_LIMIT']))
     while True:
         if rdiscount.realdiscount(infinity_db, os.environ['DB_TABLE_NAME'], os.environ['DB_TABLE_NOTIFY']): break
 
