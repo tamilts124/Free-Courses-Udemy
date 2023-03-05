@@ -184,7 +184,10 @@ class Realdiscount:
         row =result['row']
         if row:
             times =row[0][0]; olddate =row[0][1]; oldtime =row[0][2]
-            query =f'update {notify_table} set NewDate="{date.strftime(r"%Y-%m-%d")}", OldDate="{olddate}", NewTime="{time.strftime("%H:%M %p")}", OldTime="{oldtime}", Times={int(times)+1}, Notify=true where place="{Place}" and level="{Level}" and info="{Info}"'
+            query =f'update {notify_table} set Times={int(times)+1}, Notify=true'
+            if olddate =='NULL' and oldtime =='NULL':
+                query +=f', NewDate="{date.strftime(r"%Y-%m-%d")}", OldDate="{olddate}", NewTime="{time.strftime("%H:%M %p")}", OldTime="{oldtime}"'
+            query+=f' where place="{Place}" and level="{Level}" and info="{Info}"'
         else: query =f'insert into {notify_table} (Place, Level, NewDate, NewTime, Info) values ("{Place}", "{Level}", "{date.strftime(r"%Y-%m-%d")}", "{time.strftime("%H:%M %p")}", "{Info}")'
         return db.query(query)
 
