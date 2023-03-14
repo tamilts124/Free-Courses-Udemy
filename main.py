@@ -151,7 +151,8 @@ class Realdiscount:
             for data in [course_name, course_id, coupon_code, update, int(result_json.get('real_price', 0) if result_json else 0), '', 0]: coupon_data.append(data)
             wast_offers.append(coupon_data)
         thread[0] -=1
-        print(course_title+f' [{update}]')
+        try: print(course_title+f' [{update}]')
+        except: pass
         coupon_data.append(course_title)
 
     def enroll_course(self, db, db_notify, courses):
@@ -256,7 +257,10 @@ class Realdiscount:
         print('\n\n> Checking Offers For Enrolling...\n')
         thread =[0]
         for coupon_data in range(len(coupon_datas)):
-            if coupon_datas[coupon_data][1] in old_coupons: print(coupon_datas[coupon_data][0]+f' [Old Coupon]'); old_offers.append(coupon_datas[coupon_data][1])
+            if coupon_datas[coupon_data][1] in old_coupons:
+                try:print(coupon_datas[coupon_data][0]+f' [Old Coupon]'); 
+                except: pass
+                old_offers.append(coupon_datas[coupon_data][1])
             else:
                 Thread(target=self.check_offer, args=[coupon_datas[coupon_data], avail_offers, wast_offers, final_offers, thread]).start()
                 thread[0] +=1
@@ -280,7 +284,9 @@ class Realdiscount:
             return 1
 
         print('\n\n> Valid Courses..\n')
-        for id, data in enumerate(avail_offers, start =1): print(f'{id}. {data[-1]}')
+        for id, data in enumerate(avail_offers, start =1):
+            try: print(f'{id}. {data[-1]}')
+            except: pass
         print('\n> Enrolling Courses..\n')
         bundle_size =self.enrolls_limit
         total_bundle =len(final_offers)//bundle_size
