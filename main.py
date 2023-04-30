@@ -169,9 +169,9 @@ class Realdiscount:
             else:
                 update ='Failed'
                 if 'You do not have permission to perform this action' in result_json.get('detail', ''):
-                    self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Error-Critical", "Enroll Failed, Session id or Access Token is Expired")
+                    self.send_Notify(db, db_notify, "Free-Courses-Udemy", "Error-Critical", "Enroll Failed, Session id or Access Token is Expired")
                     raise Exception('Enroll Fail, Session id or Access Token is Expired...\n')
-            if not result_json.get('status')=='succeeded': self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Error-UnKnown", "UnKnown Error")
+            if not result_json.get('status')=='succeeded': self.send_Notify(db, db_notify, "Free-Courses-Udemy", "Error-UnKnown", "UnKnown Error")
         except json.JSONDecodeError:
             if result_page.status_code==504:update ='Succeeded'
             else:print(result_page.text);update ='Error'
@@ -249,7 +249,7 @@ class Realdiscount:
                 if len(coupon_datas)+len(wrong_datas)==len(offer_links): break
 
         if not coupon_datas:
-            self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Info-High", "No Free Courses Available")
+            self.send_Notify(db, db_notify, "Free-Courses-Udemy", "Info-High", "No Free Courses Available")
             print('> Free Course Offers Not Found..\n')
             return 1
         
@@ -273,13 +273,13 @@ class Realdiscount:
             print('\n\n> Courses Not Valid For Enrolling..\n')
             if wast_offers:
                 if self.make_cache(db, db_table, wast_offers):
-                    self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Info-Low", "Success, Enrolled and Expired Datas Updated, But No Free Courses Available")
+                    self.send_Notify(db, db_notify, "Free-Courses-Udemy", "Info-Low", "Success, Enrolled and Expired Datas Updated, But No Free Courses Available")
                     print('> Success, Enrolled and Expired Datas Updated...\n')
                 else:
-                    self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Error-High", "Failed, Enrolled and Expired datas Update to Database")
+                    self.send_Notify(db, db_notify, "Free-Courses-Udemy", "Error-High", "Failed, Enrolled and Expired datas Update to Database")
                     raise Exception('Fail, Enrolled and Expired Datas Update...\n')
             else:
-                self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Info-Normal", "No Datas Available for Update to Database")
+                self.send_Notify(db, db_notify, "Free-Courses-Udemy", "Info-Normal", "No Datas Available for Update to Database")
                 print('> No Datas For Update...\n')
             return 1
 
@@ -300,18 +300,18 @@ class Realdiscount:
         for status in total_status:
             if status != 'Succeeded':
                 if self.make_cache(db, db_table, wast_offers):
-                    self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Info-High", "Success, Enrolled and Expired datas Update to Database, The Program Refetching the Courses for Try To Again Enroll")
+                    self.send_Notify(db, db_notify, "Free-Courses-Udemy", "Info-High", "Success, Enrolled and Expired datas Update to Database, The Program Refetching the Courses for Try To Again Enroll")
                     print('> Success, Enrolled and Expired Datas Updated...\n')
                 else:
-                    self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Error-High", "Failed, Enrolled and Expired datas Update to Database, The Program Refetching the Courses for Try To Again Enroll")
+                    self.send_Notify(db, db_notify, "Free-Courses-Udemy", "Error-High", "Failed, Enrolled and Expired datas Update to Database, The Program Refetching the Courses for Try To Again Enroll")
                     raise Exception('Fail, Enrolled and Expired Datas Update...\n')
                 return 0
         else:
             if self.make_cache(db, db_table, wast_offers+avail_offers):
-                self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Info-Normal", f"Success, datas Updated to Database, {len(final_offers)} Courses Enrolled")
+                self.send_Notify(db, db_notify, "Free-Courses-Udemy", "Info-Normal", f"Success, datas Updated to Database, {len(final_offers)} Courses Enrolled")
                 print('> Success, Datas Updated...\n')
             else:
-                self.send_Notify(db, db_notify, "Github/FreeCoursesForUdemy", "Error-High", "Failed, All datas Update to Database")
+                self.send_Notify(db, db_notify, "Free-Courses-Udemy", "Error-High", "Failed, All datas Update to Database")
                 raise Exception('Fail, Datas Update...\n')
         return 1
 
