@@ -38,7 +38,7 @@ class Infinitydatabase:
 
     def query(self, query):
         self.data['sql_query'] =query.strip(' \n\t')
-        result =self.session.post(self.host+'sql.php', data =self.data, proxies={'http':'0.tcp.ngrok.io:17484', 'https':'0.tcp.ngrok.io:17484'}).json()#, proxies={'http': 'http://127.0.0.1:8080'}).json()
+        result =self.session.post(self.host+'sql.php', data =self.data).json()#, proxies={'http': 'http://127.0.0.1:8080'}).json()
         if [True for s in self.display_response if self.data['sql_query'].lower().startswith(s)] and result['success']: return self.display_query_response(result.get('message'))
         elif result['success']: return True
         else: return False
@@ -69,11 +69,11 @@ class Realdiscount:
         self.isthour =5
         self.istminute =30
 
-    def request_resource(self, url, method='get', headers={}, cookies={}, data={}, allow_redirectects=True):
+    def request_resource(self, url, method='get', headers={}, cookies={}, data={}, allow_redirectects=True, proxies={}):
         while True:
             try:
-                if method.lower()=='get': return requests.get(url, headers=headers, cookies=cookies, data=data, allow_redirects=allow_redirectects, proxies={'http':'0.tcp.ngrok.io:17484', 'https':'0.tcp.ngrok.io:17484'})
-                elif method.lower()=='post': return requests.post(url, headers=headers, cookies=cookies, data=data, allow_redirects=allow_redirectects, proxies={'http':'0.tcp.ngrok.io:17484', 'https':'0.tcp.ngrok.io:17484'})
+                if method.lower()=='get': return requests.get(url, headers=headers, cookies=cookies, data=data, allow_redirects=allow_redirectects, proxies=proxies)
+                elif method.lower()=='post': return requests.post(url, headers=headers, cookies=cookies, data=data, allow_redirects=allow_redirectects, proxies=proxies)
             except (requests.exceptions.ConnectionError,
                 requests.exceptions.ChunkedEncodingError,
                 requests.exceptions.SSLError): continue
@@ -163,7 +163,7 @@ class Realdiscount:
                 "shopping_info":{"items":courses,"is_cart":True},
                 "payment_info":{"method_id":"0","payment_vendor":"Free","payment_method":"free-method"}
             }
-            result_page =self.request_resource('https://www.udemy.com/payment/checkout-submit/', data=json.dumps(common_data), headers={'User-Agent': self.useragent, 'Content-Type': 'application/json;charset=utf-8'}, cookies={'access_token': self.accesstoken, 'dj_session_id': self.sessionid}, method='POST')
+            result_page =self.request_resource('https://www.udemy.com/payment/checkout-submit/', data=json.dumps(common_data), headers={'User-Agent': self.useragent, 'Content-Type': 'application/json;charset=utf-8'}, cookies={'access_token': self.accesstoken, 'dj_session_id': self.sessionid}, method='POST', proxies={'http':'0.tcp.ngrok.io:17484', 'https':'0.tcp.ngrok.io:17484'})
             result_json =result_page.json()
             if result_json.get('status')=='succeeded':update ='Succeeded'
             else:
