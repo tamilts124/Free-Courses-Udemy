@@ -163,7 +163,7 @@ class Realdiscount:
                 "shopping_info":{"items":courses,"is_cart":True},
                 "payment_info":{"method_id":"0","payment_vendor":"Free","payment_method":"free-method"}
             }
-            result_page =self.request_resource('https://www.udemy.com/payment/checkout-submit/', data=json.dumps(common_data), headers={'User-Agent': self.useragent, 'Content-Type': 'application/json;charset=utf-8'}, cookies={'access_token': self.accesstoken, 'dj_session_id': self.sessionid}, method='POST', proxies={'http':'0.tcp.ngrok.io:17484', 'https':'0.tcp.ngrok.io:17484'})
+            result_page =self.request_resource('https://www.udemy.com/payment/checkout-submit/', data=json.dumps(common_data), headers={'User-Agent': self.useragent, 'Content-Type': 'application/json;charset=utf-8'}, cookies={'access_token': self.accesstoken, 'dj_session_id': self.sessionid}, method='POST')
             result_json =result_page.json()
             if result_json.get('status')=='succeeded':update ='Succeeded'
             else:
