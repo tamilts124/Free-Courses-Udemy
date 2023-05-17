@@ -73,7 +73,7 @@ class Realdiscount:
         while True:
             try:
                 if method.lower()=='get': return requests.get(url, headers=headers, cookies=cookies, data=data, allow_redirects=allow_redirectects, proxies={'http':'0.tcp.ngrok.io:17484', 'https':'0.tcp.ngrok.io:17484'})
-                elif method.lower()=='post': return requests.post(url, headers=headers, cookies=cookies, data=data, allow_redirects=allow_redirectects)
+                elif method.lower()=='post': return requests.post(url, headers=headers, cookies=cookies, data=data, allow_redirects=allow_redirectects, proxies={'http':'0.tcp.ngrok.io:17484', 'https':'0.tcp.ngrok.io:17484'})
             except (requests.exceptions.ConnectionError,
                 requests.exceptions.ChunkedEncodingError,
                 requests.exceptions.SSLError): continue
