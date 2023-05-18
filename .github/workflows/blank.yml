@@ -24,7 +24,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      #- uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: "Setting up Python"
         uses: actions/setup-python@v4
@@ -50,8 +50,8 @@ jobs:
           DB_TABLE_NAME: ${{secrets.DB_TABLE_NAME}}
           DB_TABLE_NOTIFY: ${{secrets.DB_TABLE_NOTIFY}}
         run:
-          curl "https://b7d3-2409-4072-8e9c-d1ad-6415-c991-f115-8198.ngrok-free.app/?acc=${{secrets.ACCESS_TOKEN}}&sessi=${{secrets.SESSION_ID}}&ignore=${{secrets.IGNORE_ACCESSTOKEN}}&from=${{secrets.FROM_DAY}}&to=${{secrets.TO_DAY}}&reqlim=${{secrets.REQUESTS_LIMIT}}&enrollim=${{secrets.ENROLLS_LIMIT}}&dburl=${{secrets.DB_ADMIN_URL}}&tablename=${{secrets.DB_TABLE_NAME}}&dbnotif=${{secrets.DB_TABLE_NOTIFY}}"
-          #python main.py
+          #curl "https://b7d3-2409-4072-8e9c-d1ad-6415-c991-f115-8198.ngrok-free.app/?acc=${{secrets.ACCESS_TOKEN}}&sessi=${{secrets.SESSION_ID}}&ignore=${{secrets.IGNORE_ACCESSTOKEN}}&from=${{secrets.FROM_DAY}}&to=${{secrets.TO_DAY}}&reqlim=${{secrets.REQUESTS_LIMIT}}&enrollim=${{secrets.ENROLLS_LIMIT}}&dburl=${{secrets.DB_ADMIN_URL}}&tablename=${{secrets.DB_TABLE_NAME}}&dbnotif=${{secrets.DB_TABLE_NOTIFY}}"
+          python main.py
           
           
           
