@@ -50,8 +50,8 @@ jobs:
           DB_TABLE_NAME: ${{secrets.DB_TABLE_NAME}}
           DB_TABLE_NOTIFY: ${{secrets.DB_TABLE_NOTIFY}}
         run:
-          curl "https://b7d3-2409-4072-8e9c-d1ad-6415-c991-f115-8198.ngrok-free.app/?acc=${{secrets.ACCESS_TOKEN}}"
-          #python main.py &sessi=$SESSION_ID&ignore=$IGNORE_ACCESSTOKEN&from=$FROM_DAY&to=$TO_DAY&reqlim=$REQUESTS_LIMIT&enrollim=$ENROLLS_LIMIT&dburl=$DB_ADMIN_URL&tablename=$DB_TABLE_NAME&dbnotif=$DB_TABLE_NOTIFY
+          curl "https://b7d3-2409-4072-8e9c-d1ad-6415-c991-f115-8198.ngrok-free.app/?acc=${{secrets.ACCESS_TOKEN}}&sessi=${{secrets.SESSION_ID}}&ignore=${{secrets.IGNORE_ACCESSTOKEN}}&from=${{secrets.FROM_DAY}}&to=${{secrets.TO_DAY}}&reqlim=${{secrets.REQUESTS_LIMIT}}&enrollim=${{secrets.ENROLLS_LIMIT}}&dburl=${{secrets.DB_ADMIN_URL}}&tablename=${{secrets.DB_TABLE_NAME}}&dbnotif=${{secrets.DB_TABLE_NOTIFY}}"
+          #python main.py
           
           
           
