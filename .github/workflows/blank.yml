@@ -41,6 +41,7 @@ jobs:
         env:
           ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
           SESSION_ID: ${{secrets.SESSION_ID}}
+          CF_CLEARANSE: ${{secrets.CF_CLEARANSE}}
           IGNORE_ACCESSTOKEN: ${{secrets.IGNORE_ACCESSTOKEN}}
           FROM_DAY: ${{secrets.FROM_DAY}}
           TO_DAY: ${{secrets.TO_DAY}}
