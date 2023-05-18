@@ -163,7 +163,7 @@ class Realdiscount:
                 "shopping_info":{"items":courses,"is_cart":True},
                 "payment_info":{"method_id":"0","payment_vendor":"Free","payment_method":"free-method"}
             }
-            result_page =self.request_resource('https://www.udemy.com/payment/checkout-submit/', data=json.dumps(common_data), headers={'User-Agent': self.useragent, 'Content-Type': 'application/json;charset=utf-8'}, cookies={'access_token': self.accesstoken, 'dj_session_id': self.sessionid, '__cf_bm':'luZNJsENE5lT1E1zw.98FcYBTh5NNwOJtJx8vVU81dw-1684409354-0-AfBq4Ci/ylo6FiPSDm+ZJx5YcxK+w/ausNCzlixBwWB0YSySmAI8Dx4WNXVZY4xjrEVn1uF7BLD99Jj/I+3O0hhJYbn0JO6e5AQXz/UfH6jmFu+OWIVmj6ELSXEl08jHO6Tm8f0aHC0SKK3emdh8A0o='}, method='POST')
+            result_page =self.request_resource('https://www.udemy.com/payment/checkout-submit/', data=json.dumps(common_data), headers={'User-Agent': self.useragent, 'Content-Type': 'application/json;charset=utf-8'}, cookies={'access_token': self.accesstoken, 'dj_session_id': self.sessionid, 'cf_clearanse':os.environ['CF_CLEARANSE']}, method='POST')
             result_json =result_page.json()
             if result_json.get('status')=='succeeded':update ='Succeeded'
             else:
