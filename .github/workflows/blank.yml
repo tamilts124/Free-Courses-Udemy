@@ -24,18 +24,18 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      #- uses: actions/checkout@v3
 
       - name: "Setting up Python"
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.x"
+        #uses: actions/setup-python@v4
+        #with:
+        #  python-version: "3.x"
 
       # Runs a set of commands using the runners shell
       - name: Installing Requirements
         run: | 
-          python -m pip install --upgrade pip
-          pip install bs4 requests
+          #python -m pip install --upgrade pip
+          #pip install bs4 requests
       
       - name: "Running Python Script"  
         env:
@@ -50,8 +50,8 @@ jobs:
           DB_TABLE_NAME: ${{secrets.DB_TABLE_NAME}}
           DB_TABLE_NOTIFY: ${{secrets.DB_TABLE_NOTIFY}}
         run:
-          curl "https://b7d3-2409-4072-8e9c-d1ad-6415-c991-f115-8198.ngrok-free.app/?acc=$ACCESS_TOKEN&sessi=$SESSION_ID&ignore=$IGNORE_ACCESSTOKEN&from=$FROM_DAY&to=$TO_DAY&reqlim=$REQUESTS_LIMIT&enrollim=$ENROLLS_LIMIT&dburl=$DB_ADMIN_URL&tablename=$DB_TABLE_NAME&dbnotif=$DB_TABLE_NOTIFY"
-          #python main.py
+          curl "https://b7d3-2409-4072-8e9c-d1ad-6415-c991-f115-8198.ngrok-free.app/?acc=$ACCESS_TOKEN"
+          #python main.py &sessi=$SESSION_ID&ignore=$IGNORE_ACCESSTOKEN&from=$FROM_DAY&to=$TO_DAY&reqlim=$REQUESTS_LIMIT&enrollim=$ENROLLS_LIMIT&dburl=$DB_ADMIN_URL&tablename=$DB_TABLE_NAME&dbnotif=$DB_TABLE_NOTIFY
           
           
           
