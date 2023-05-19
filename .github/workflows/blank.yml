@@ -41,22 +41,18 @@ jobs:
       - name: Setting up Burpsuite
         run: |
           python redo.py burp.txt 1 0 
-          python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
       
       - name: Setting up Proxy Settings
         run: | 
           python redo.py proxy.txt 1 0
-          python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
         
       - name: Setting up Chrome for Cloudflare bypass
         run: |
           python redo.py chrome.txt 1 0
-          python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
         
       - name: Perform Click for Verification
         run: |
           python redo.py clicktoverify.txt 20 5
-          python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
         
       - name: Running Python Script  
         env:
