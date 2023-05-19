@@ -26,7 +26,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      - name: "Setting up Python"
+      - name: Setting up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.x"
@@ -35,9 +35,19 @@ jobs:
       - name: Installing Requirements
         run: | 
           python -m pip install --upgrade pip
-          pip install bs4 requests
+          pip install bs4 requests pynput
+          choco install burp-suite-free-edition
+
+      - name: Setting up Burpsuite
+        run: python redo.py burp.rd 1 0 
       
-      - name: "Running Python Script"  
+      - name: Setting up Proxy Settings
+        run: python redo.py proxy.rd 1 0
+        
+      - name: Setting up Chrome for Cloudflaure bypass
+        run: python redo.py chrome.rd 1 0
+        
+      - name: Running Python Script  
         env:
           ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
           SESSION_ID: ${{secrets.SESSION_ID}}
