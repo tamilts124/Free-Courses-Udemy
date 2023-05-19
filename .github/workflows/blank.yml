@@ -48,7 +48,7 @@ jobs:
         run: python redo.py chrome.txt 1 0
         
       - name: Perform Click for Verification
-        run: python redo.py clicktoverify.txt 30 3
+        run: python redo.py clicktoverify.txt 20 5
         
       - name: Running Python Script  
         env:
