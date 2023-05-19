@@ -22,7 +22,7 @@ class Infinitydatabase:
             'Connection': 'close'
         }
         self.session.headers =self.headers
-        response =self.session.get(self.adminurl).text
+        response =self.session.get(self.adminurl, verify=False).text
         self.commonparams =response.split('PMA_commonParams.setAll(')[1].split(');')[0]
         self.server =self.commonparams.split('server:"')[1].split('"')[0]
         self.token =self.commonparams.split('token:"')[1].split('"')[0]
@@ -40,7 +40,7 @@ class Infinitydatabase:
 
     def query(self, query):
         self.data['sql_query'] =query.strip(' \n\t')
-        result =self.session.post(self.host+'sql.php', data =self.data).json()#, proxies={'http': 'http://127.0.0.1:8080'}).json()
+        result =self.session.post(self.host+'sql.php', data=self.data, verify=False).json()
         if [True for s in self.display_response if self.data['sql_query'].lower().startswith(s)] and result['success']: return self.display_query_response(result.get('message'))
         elif result['success']: return True
         else: return False
