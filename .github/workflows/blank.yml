@@ -37,42 +37,47 @@ jobs:
           python -m pip install --upgrade pip
           pip install bs4 requests pynput pyautogui pillow
           choco install burp-suite-free-edition
-      
-      - name: Loading Environment Variables
-        env: |
-            ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
-            SESSION_ID: ${{secrets.SESSION_ID}}
-            FREE_IMAGEKEY: ${{secrets.FREE_IMAGEKEY}}
-            IGNORE_ACCESSTOKEN: ${{secrets.IGNORE_ACCESSTOKEN}}
-            FROM_DAY: ${{secrets.FROM_DAY}}
-            TO_DAY: ${{secrets.TO_DAY}}
-            REQUESTS_LIMIT: ${{secrets.REQUESTS_LIMIT}}
-            ENROLLS_LIMIT: ${{secrets.ENROLLS_LIMIT}}
-            DB_ADMIN_URL: ${{secrets.DB_ADMIN_URL}}
-            DB_TABLE_NAME: ${{secrets.DB_TABLE_NAME}}
-            DB_TABLE_NOTIFY: ${{secrets.DB_TABLE_NOTIFY}}
 
       - name: Setting up Burpsuite
+        env:
+          FREE_IMAGEKEY: ${{secrets.FREE_IMAGEKEY}}
         run: |
           python redo.py burp.txt 1 0 
           python takescreenshoot.py
       
       - name: Setting up Proxy Settings
+        env:
+          FREE_IMAGEKEY: ${{secrets.FREE_IMAGEKEY}}
         run: | 
           python redo.py proxy.txt 1 0
           python takescreenshoot.py
         
       - name: Setting up Chrome for Cloudflare bypass
+        env:
+          FREE_IMAGEKEY: ${{secrets.FREE_IMAGEKEY}}
         run: |
           python redo.py chrome.txt 1 0
           python takescreenshoot.py
         
       - name: Perform Click for Verification
+        env:
+          FREE_IMAGEKEY: ${{secrets.FREE_IMAGEKEY}}
         run: |
           python redo.py clicktoverify.txt 20 5
           python takescreenshoot.py
         
       - name: Running Python Script  
+        env:
+          ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
+          SESSION_ID: ${{secrets.SESSION_ID}}
+          IGNORE_ACCESSTOKEN: ${{secrets.IGNORE_ACCESSTOKEN}}
+          FROM_DAY: ${{secrets.FROM_DAY}}
+          TO_DAY: ${{secrets.TO_DAY}}
+          REQUESTS_LIMIT: ${{secrets.REQUESTS_LIMIT}}
+          ENROLLS_LIMIT: ${{secrets.ENROLLS_LIMIT}}
+          DB_ADMIN_URL: ${{secrets.DB_ADMIN_URL}}
+          DB_TABLE_NAME: ${{secrets.DB_TABLE_NAME}}
+          DB_TABLE_NOTIFY: ${{secrets.DB_TABLE_NOTIFY}}
         run: python main.py
           
           
