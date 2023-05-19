@@ -39,32 +39,24 @@ jobs:
           choco install burp-suite-free-edition
 
       - name: Setting up Burpsuite
-        env:
-          FREE_IMAGEKEY: ${{secrets.FREE_IMAGEKEY}}
         run: |
           python redo.py burp.txt 1 0 
-          python takescreenshoot.py
+          python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
       
       - name: Setting up Proxy Settings
-        env:
-          FREE_IMAGEKEY: ${{secrets.FREE_IMAGEKEY}}
         run: | 
           python redo.py proxy.txt 1 0
-          python takescreenshoot.py
+          python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
         
       - name: Setting up Chrome for Cloudflare bypass
-        env:
-          FREE_IMAGEKEY: ${{secrets.FREE_IMAGEKEY}}
         run: |
           python redo.py chrome.txt 1 0
-          python takescreenshoot.py
+          python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
         
       - name: Perform Click for Verification
-        env:
-          FREE_IMAGEKEY: ${{secrets.FREE_IMAGEKEY}}
         run: |
           python redo.py clicktoverify.txt 20 5
-          python takescreenshoot.py
+          python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
         
       - name: Running Python Script  
         env:
