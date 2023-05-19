@@ -2,7 +2,9 @@ from time import sleep
 from threading import Thread
 from bs4 import BeautifulSoup
 import datetime as dt
-import requests, json, os
+import requests, json, os, urllib3
+
+urllib3.disable_warnings()
 
 class Infinitydatabase:
 
@@ -69,7 +71,7 @@ class Realdiscount:
         self.isthour =5
         self.istminute =30
 
-    def request_resource(self, url, method='get', headers={}, cookies={}, data={}, json={}, allow_redirectects=True, proxies={}, verify=True):
+    def request_resource(self, url, method='get', headers={}, cookies={}, data={}, json={}, allow_redirectects=True, proxies={}, verify=False):
         while True:
             try:
                 if method.lower()=='get': return requests.get(url, headers=headers, cookies=cookies, data=data, json=json, allow_redirects=allow_redirectects, proxies=proxies, verify=verify)
@@ -95,7 +97,8 @@ class Realdiscount:
         json_data =self.request_resource(
             f'https://www.udemy.com/api-2.0/course-landing-components/{course_id}/me/?components=purchase,redeem_coupon,discount_expiration&discountCode={coupon}',
             headers={'User-Agent': self.useragent}
-        ).json()
+        )
+        json_data =json_data.json()
         if not json_data.get('redeem_coupon'):return
         status =json_data['redeem_coupon']['discount_attempts'][0]['status']
         if status=='applied':return {
@@ -120,7 +123,11 @@ class Realdiscount:
         course_name =coupon_data[1].split('/')[-2]
         coupon_code =coupon_data[1].split('=')[-1]
         course_id =self.get_courseid(self.request_resource(coupon_data[1]).text)
-        result_json =self.get_coupon_status(course_id, coupon_code)
+        while True:
+            try:
+                result_json =self.get_coupon_status(course_id, coupon_code)
+                break
+            except Exception: pass
         coupon_data =[]
         if result_json and result_json.get('uses_remaining'):
             result_page =self.request_resource(f'https://www.udemy.com/api-2.0/courses/{course_id}/subscriber-curriculum-items/', headers={'User-Agent': self.useragent}, cookies={'access_token': self.accesstoken})
@@ -160,10 +167,10 @@ class Realdiscount:
             common_data ={
                 "checkout_environment":"Marketplace",
                 "checkout_event":"Submit",
-                "shopping_info":{"items":courses,"is_cart":True},
+                "shopping_info":{"items":courses,"is_cart":False},
                 "payment_info":{"method_id":"0","payment_vendor":"Free","payment_method":"free-method"}
             }
-            result_page =self.request_resource('https://www.udemy.com/payment/checkout-submit/', data=json.dumps(common_data), headers={'User-Agent': self.useragent, 'Content-Type': 'application/json;charset=utf-8'}, cookies={'access_token': self.accesstoken, 'dj_session_id': self.sessionid}, proxies={'https': '127.0.0.1:8080'}, method='POST', verify=False)
+            result_page =self.request_resource('https://www.udemy.com/payment/checkout-submit/', data=json.dumps(common_data), headers={'User-Agent': self.useragent, 'Content-Type': 'application/json'}, cookies={'access_token': self.accesstoken, 'dj_session_id': self.sessionid}, method='POST')
             result_json =result_page.json()
             if result_json.get('status')=='succeeded':update ='Succeeded'
             else:
