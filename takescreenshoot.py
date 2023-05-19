@@ -1,5 +1,5 @@
 import pyautogui
-import requests
+import requests, os
 import base64, io
 
 # take screenshot
