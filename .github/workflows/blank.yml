@@ -9,7 +9,7 @@ on:
     branches: [ "main" ]
     
   schedule:
-    - cron: '30 * * * *'  # testing trigger time
+    - cron: '*/15 * * * *'  # testing trigger time
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
