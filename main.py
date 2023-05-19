@@ -69,11 +69,11 @@ class Realdiscount:
         self.isthour =5
         self.istminute =30
 
-    def request_resource(self, url, method='get', headers={}, cookies={}, data={}, allow_redirectects=True, proxies={}):
+    def request_resource(self, url, method='get', headers={}, cookies={}, data={}, json={}, allow_redirectects=True, proxies={}, verify=True):
         while True:
             try:
-                if method.lower()=='get': return requests.get(url, headers=headers, cookies=cookies, data=data, allow_redirects=allow_redirectects, proxies=proxies)
-                elif method.lower()=='post': return requests.post(url, headers=headers, cookies=cookies, data=data, allow_redirects=allow_redirectects, proxies=proxies)
+                if method.lower()=='get': return requests.get(url, headers=headers, cookies=cookies, data=data, json=json, allow_redirects=allow_redirectects, proxies=proxies, verify=verify)
+                elif method.lower()=='post': return requests.post(url, headers=headers, cookies=cookies, data=data, json=json, allow_redirects=allow_redirectects, proxies=proxies, verify=verify)
             except (requests.exceptions.ConnectionError,
                 requests.exceptions.ChunkedEncodingError,
                 requests.exceptions.SSLError): continue
@@ -163,7 +163,7 @@ class Realdiscount:
                 "shopping_info":{"items":courses,"is_cart":True},
                 "payment_info":{"method_id":"0","payment_vendor":"Free","payment_method":"free-method"}
             }
-            result_page =self.request_resource('https://www.udemy.com/payment/checkout-submit/', data=json.dumps(common_data), headers={'User-Agent': self.useragent, 'Content-Type': 'application/json;charset=utf-8'}, cookies={'access_token': self.accesstoken, 'dj_session_id': self.sessionid, 'cf_clearance':os.environ['CF_CLEARANCE']}, method='POST')
+            result_page =self.request_resource('https://www.udemy.com/payment/checkout-submit/', data=json.dumps(common_data), headers={'User-Agent': self.useragent, 'Content-Type': 'application/json;charset=utf-8'}, cookies={'access_token': self.accesstoken, 'dj_session_id': self.sessionid}, proxies={'https': '127.0.0.1:8080'}, method='POST', verify=False)
             result_json =result_page.json()
             if result_json.get('status')=='succeeded':update ='Succeeded'
             else:
