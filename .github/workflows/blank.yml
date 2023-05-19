@@ -44,7 +44,7 @@ jobs:
       - name: Setting up Proxy Settings
         run: python redo.py proxy.rd 1 0
         
-      - name: Setting up Chrome for Cloudflaure bypass
+      - name: Setting up Chrome for Cloudflare bypass
         run: python redo.py chrome.rd 1 0
         
       - name: Running Python Script  
