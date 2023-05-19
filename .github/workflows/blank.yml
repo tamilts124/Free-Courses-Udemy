@@ -9,7 +9,7 @@ on:
     branches: [ "main" ]
     
   schedule:
-    - cron: '15 * * * *'  # testing trigger time
+    - cron: '*/15 * * * *'  # testing trigger time
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -39,7 +39,7 @@ jobs:
           choco install burp-suite-free-edition
       
       - name: Loading Environment Variables
-        env:
+        env: |
             ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
             SESSION_ID: ${{secrets.SESSION_ID}}
             FREE_IMAGEKEY: ${{secrets.FREE_IMAGEKEY}}
