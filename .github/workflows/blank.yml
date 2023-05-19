@@ -52,7 +52,7 @@ jobs:
         
       - name: Perform Click for Verification
         run: |
-          python redo.py clicktoverify.txt 20 5
+          python redo.py clicktoverify.txt 20 4
         
       - name: Running Python Script  
         env:
