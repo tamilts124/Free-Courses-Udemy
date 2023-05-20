@@ -62,6 +62,14 @@ jobs:
           $output = & python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
           Write-Host "Output: $output"
           
+      - name: Copy CF_CLEARANCE
+        run: |
+          python redo.py cpcfclearance.txt 1 0
+          $paste =python -c 'import pyperclip; print(pyperclip.paste())'
+          [Environment]::SetEnvironmentVariable("CF_CLEARANCE", $paste, "Machine")
+          $output = & python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
+          Write-Host "Output: $output"
+          
       - name: Running Python Script  
         env:
           ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
