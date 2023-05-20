@@ -40,7 +40,9 @@ jobs:
 
       - name: Setting up Burpsuite
         run: |
-          python redo.py burp.txt 1 0 
+          python redo.py burp.txt 1 0
+          $output = & python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
+          Write-Host "Output: $output"
       
       - name: Setting up Proxy Settings
         run: | 
@@ -68,11 +70,3 @@ jobs:
           DB_TABLE_NOTIFY: ${{secrets.DB_TABLE_NOTIFY}}
         run: python main.py
           
-          
-          
-          
-          
-          
-          
-      
-      
