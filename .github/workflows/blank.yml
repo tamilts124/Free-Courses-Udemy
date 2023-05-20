@@ -69,7 +69,7 @@ jobs:
           [Environment]::SetEnvironmentVariable("CF_CLEARANCE", $paste, "Process")
           $output = & python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
           Write-Host "Output: $output"
-          echo env:CF_CLEARANCE
+          echo $env:CF_CLEARANCE
           
       - name: Running Python Script  
         env:
