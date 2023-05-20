@@ -66,10 +66,9 @@ jobs:
         run: |
           python redo.py cpcfclearance.txt 1 0
           $paste =python -c 'import pyperclip; print(pyperclip.paste())'
-          [Environment]::SetEnvironmentVariable("CF_CLEARANCE", $paste, "Machine")
+          Set-ItemProperty -Path "HKCU:\Environment" -Name "CF_CLEARANCE" -Value $paste    
           $output = & python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
           Write-Host "Output: $output"
-          echo $env:CF_CLEARANCE
           
       - name: Running Python Script  
         env:
@@ -84,4 +83,7 @@ jobs:
           DB_TABLE_NAME: ${{secrets.DB_TABLE_NAME}}
           DB_TABLE_NOTIFY: ${{secrets.DB_TABLE_NOTIFY}}
         run: |
+          $paste = Get-ItemPropertyValue -Path "HKCU:\Environment" -Name "CF_CLEARANCE"
+          [Environment]::SetEnvironmentVariable("CF_CLEARANCE", $paste, "Process")
+          echo $env:CF_CLEARANCE
           python main.py
