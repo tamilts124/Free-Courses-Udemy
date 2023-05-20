@@ -15,7 +15,7 @@ class Realdiscount:
         self.ignoreaccounts =ignore_accounts.split()
         self.fromday =fromday
         self.today =today
-        self.useragent ='Mozilla/5.0 (X11; Windows x86_64; rv:102.0) Gecko/20100101 Firefox/102.0'
+        self.useragent ='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36'
         self.requests_limit =requests_limit
         self.enrolls_limit =enrolls_limit
         self.isthour =5
@@ -120,7 +120,7 @@ class Realdiscount:
                 "shopping_info":{"items":courses,"is_cart":False},
                 "payment_info":{"method_id":"0","payment_vendor":"Free","payment_method":"free-method"}
             }
-            result_page =self.request_resource('https://www.udemy.com/payment/checkout-submit/', data=json.dumps(common_data), headers={'User-Agent': self.useragent, 'Content-Type': 'application/json'}, cookies={'access_token': self.accesstoken, 'dj_session_id': self.sessionid}, method='POST')
+            result_page =self.request_resource('https://www.udemy.com/payment/checkout-submit/', data=json.dumps(common_data), headers={'User-Agent': self.useragent, 'Content-Type': 'application/json'}, cookies={'access_token': self.accesstoken, 'dj_session_id': self.sessionid, 'cf_clearance': '0v0afm5C0AJo4MHCKFIAKbQVHMV5rK6619pNODdKA1o-1684574701-0-250'}, method='POST')
             result_json =result_page.json()
             if result_json.get('status')=='succeeded':update ='Succeeded'
             else:
