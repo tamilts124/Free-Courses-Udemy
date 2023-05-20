@@ -122,7 +122,9 @@ class Realdiscount:
                 "shopping_info":{"items":courses,"is_cart":False},
                 "payment_info":{"method_id":"0","payment_vendor":"Free","payment_method":"free-method"}
             }
-            result_page =self.request_resource('https://www.udemy.com/payment/checkout-submit/', data=json.dumps(common_data), headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36', 'Content-Type': 'application/json'}, cookies={'access_token': self.accesstoken, 'dj_session_id': self.sessionid, 'cf_clearance': os.environ['CF_CLEARANCE']}, method='POST')
+            cookies={'access_token': self.accesstoken, 'dj_session_id': self.sessionid}
+            if os.environ.get('CF_CLEARANCE'): cookies['cf_clearance'] =os.environ['CF_CLEARANCE']
+            result_page =self.request_resource('https://www.udemy.com/payment/checkout-submit/', data=json.dumps(common_data), headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36', 'Content-Type': 'application/json'}, cookies=cookies, method='POST')
             result_json =result_page.json()
             if result_json.get('status')=='succeeded':update ='Succeeded'
             else:
