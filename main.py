@@ -3,6 +3,7 @@ from threading import Thread
 from bs4 import BeautifulSoup
 import datetime as dt
 import requests, json, os, urllib3
+from Infinitydatabase import Infinitydatabase
 
 urllib3.disable_warnings()
 
