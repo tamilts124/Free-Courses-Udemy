@@ -1,6 +1,8 @@
-import pyautogui
+import pyautogui, urllib3
 import requests, sys
 import base64, io
+
+urllib3.disable_warnings()
 
 # take screenshot
 screenshot = pyautogui.screenshot()
