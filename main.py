@@ -73,10 +73,12 @@ class Realdiscount:
         course_name =coupon_data[1].split('/')[-2]
         coupon_code =coupon_data[1].split('=')[-1]
         course_id =self.get_courseid(self.request_resource(coupon_data[1]).text)
+        course_id, result_json =None, None
         while True:
             try:
-                result_json =self.get_coupon_status(course_id, coupon_code)
-                break
+                if not course_id: course_id =self.get_courseid(self.request_resource(coupon_data[1]).text)
+                if not result_json: result_json =self.get_coupon_status(course_id, coupon_code)
+                if course_id: break
             except Exception: pass
         coupon_data =[]
         if result_json and result_json.get('uses_remaining'):
@@ -120,7 +122,7 @@ class Realdiscount:
                 "shopping_info":{"items":courses,"is_cart":False},
                 "payment_info":{"method_id":"0","payment_vendor":"Free","payment_method":"free-method"}
             }
-            result_page =self.request_resource('https://www.udemy.com/payment/checkout-submit/', data=json.dumps(common_data), headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36', 'Content-Type': 'application/json'}, cookies={'access_token': self.accesstoken, 'dj_session_id': self.sessionid, 'cf_clearance': '0v0afm5C0AJo4MHCKFIAKbQVHMV5rK6619pNODdKA1o-1684574701-0-250'}, method='POST')
+            result_page =self.request_resource('https://www.udemy.com/payment/checkout-submit/', data=json.dumps(common_data), headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36', 'Content-Type': 'application/json'}, cookies={'access_token': self.accesstoken, 'dj_session_id': self.sessionid, 'cf_clearance': os.environ['CF_CLEARANCE']}, method='POST')
             result_json =result_page.json()
             if result_json.get('status')=='succeeded':update ='Succeeded'
             else:
