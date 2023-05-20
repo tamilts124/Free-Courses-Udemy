@@ -47,15 +47,21 @@ jobs:
       - name: Setting up Proxy Settings
         run: | 
           python redo.py proxy.txt 1 0
-        
+          $output = & python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
+          Write-Host "Output: $output"
+          
       - name: Setting up Chrome for Cloudflare bypass
         run: |
           python redo.py chrome.txt 1 0
-        
+          $output = & python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
+          Write-Host "Output: $output"
+          
       - name: Perform Click for Verification
         run: |
           python redo.py clicktoverify.txt 20 4
-        
+          $output = & python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
+          Write-Host "Output: $output"
+          
       - name: Running Python Script  
         env:
           ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
@@ -68,5 +74,7 @@ jobs:
           DB_ADMIN_URL: ${{secrets.DB_ADMIN_URL}}
           DB_TABLE_NAME: ${{secrets.DB_TABLE_NAME}}
           DB_TABLE_NOTIFY: ${{secrets.DB_TABLE_NOTIFY}}
-        run: python main.py
-          
+        run: |
+          python main.py
+          $output = & python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
+          Write-Host "Output: $output"
