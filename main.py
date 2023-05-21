@@ -72,7 +72,6 @@ class Realdiscount:
         course_title =coupon_data[0]
         course_name =coupon_data[1].split('/')[-2]
         coupon_code =coupon_data[1].split('=')[-1]
-        course_id =self.get_courseid(self.request_resource(coupon_data[1]).text)
         course_id, result_json =None, None
         while True:
             try:
@@ -82,11 +81,15 @@ class Realdiscount:
             except Exception: pass
         coupon_data =[]
         if result_json and result_json.get('uses_remaining'):
-            result_page =self.request_resource(f'https://www.udemy.com/api-2.0/courses/{course_id}/subscriber-curriculum-items/', headers={'User-Agent': self.useragent}, cookies={'access_token': self.accesstoken})
+            while True:
+                result_page =self.request_resource(f'https://www.udemy.com/api-2.0/courses/{course_id}/subscriber-curriculum-items/', headers={'User-Agent': self.useragent}, cookies={'access_token': self.accesstoken})
+                if result_page.status_code<500: break
             if result_page.status_code==403 and not result_page.text.lower()=='resource not found':
                 assign_avail =True
                 for accesstoken in self.ignoreaccounts:
-                    result_page =self.request_resource(f'https://www.udemy.com/api-2.0/courses/{course_id}/subscriber-curriculum-items/', headers={'User-Agent': self.useragent}, cookies={'access_token': accesstoken})
+                    while True:
+                        result_page =self.request_resource(f'https://www.udemy.com/api-2.0/courses/{course_id}/subscriber-curriculum-items/', headers={'User-Agent': self.useragent}, cookies={'access_token': accesstoken})
+                        if result_page.status_code<500: break                      
                     if result_page.status_code!=403: assign_avail =False
                 if assign_avail:
                     update ='Available'
@@ -189,7 +192,10 @@ class Realdiscount:
         articles =article_links[self.fromday:self.today]
         for id, article in enumerate(articles, start=1):
             print(f'\t{id}/{len(articles)}\t', end='\r')
-            div_tags =BeautifulSoup(self.request_resource(article).text, 'html.parser').findAll('div', {'class':'ml-3'})
+            while True:
+                page =self.request_resource(article)
+                if page.status_code<500: break
+            div_tags =BeautifulSoup(page.text, 'html.parser').findAll('div', {'class':'ml-3'})
             for div_tag in div_tags:
                 sub_div_tags =div_tag.findAll('div')
                 if sub_div_tags[1].find('span', {'class':'text-muted text-sm ml-2'}).string.split(' ')[-1]=='0$' and sub_div_tags[0].a['href'].startswith('/offer/'):
