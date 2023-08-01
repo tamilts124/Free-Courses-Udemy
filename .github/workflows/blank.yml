@@ -83,7 +83,7 @@ jobs:
           DB_TABLE_NAME: ${{secrets.DB_TABLE_NAME}}
           DB_TABLE_NOTIFY: ${{secrets.DB_TABLE_NOTIFY}}
         run: |
-          $paste = Get-ItemPropertyValue -Path "HKCU:\Environment" -Name "CF_CLEARANCE"
-          [Environment]::SetEnvironmentVariable("CF_CLEARANCE", $paste, "Process")
-          echo $env:CF_CLEARANCE
+          # $paste = Get-ItemPropertyValue -Path "HKCU:\Environment" -Name "CF_CLEARANCE"
+          # [Environment]::SetEnvironmentVariable("CF_CLEARANCE", $paste, "Process")
+          # echo $env:CF_CLEARANCE
           python main.py
