@@ -59,6 +59,7 @@ class Realdiscount:
 
 
     def collect_offer(self, offer, coupon_datas, wrong_datas, thread):
+        print(offer[0])
         result_page =self.request_resource(f'https://www.real.discount{offer[0]}').text
         coupon_links =BeautifulSoup(result_page, 'html.parser').findAll('a')
         for coupon_link in coupon_links:
