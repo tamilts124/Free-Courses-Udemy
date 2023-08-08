@@ -63,8 +63,8 @@ class Realdiscount:
         result_page =self.request_resource(f'https://www.real.discount{offer[0]}').text
         coupon_links =BeautifulSoup(result_page, 'html.parser').findAll('a')
         for coupon_link in coupon_links:
-            if coupon_link.get('href', '').startswith('https://www.udemy.com/course/'):
-                coupon_datas.append([offer[1], coupon_link['href']])
+            if 'https://www.udemy.com/course/' in coupon_link.get('href', ''):
+                coupon_datas.append([offer[1], coupon_link['href'].split('murl=')[-1]])
                 break
         else: wrong_datas.append(offer[1])
         thread[0] -=1
@@ -189,7 +189,6 @@ class Realdiscount:
         anger_tags =BeautifulSoup(self.request_resource('https://www.real.discount/articles/').text, 'html.parser').findAll('a')
         article_links, offer_links =[], []
         for anger_tag in anger_tags:
-            print(anger_tag)
             if anger_tag.get('href', '').startswith('https://app.real.discount/article/'): article_links.append(anger_tag['href'])
         articles =article_links[self.fromday:self.today]
         for id, article in enumerate(articles, start=1):
