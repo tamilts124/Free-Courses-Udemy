@@ -8,8 +8,8 @@ on:
   push:
     branches: [ "main" ]
     
-  # schedule:
-  #   - cron: '*/30 * * * *'  # testing trigger time
+  schedule:
+    - cron: '*/30 * * * *'  # testing trigger time
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -36,40 +36,40 @@ jobs:
         run: | 
           python -m pip install --upgrade pip
           pip install bs4 requests 
-          # pynput pyautogui pillow pyperclip
-          # choco install burp-suite-free-edition
+          pynput pyautogui pillow pyperclip
+          choco install burp-suite-free-edition
 
-      # - name: Setting up Burpsuite
-      #   run: |
-      #     python redo.py burp.txt 1 0
-      #     $output = & python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
-      #     Write-Host "Output: $output"
+      - name: Setting up Burpsuite
+        run: |
+          python redo.py burp.txt 1 0
+          $output = & python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
+          Write-Host "Output: $output"
       
-      # - name: Setting up Proxy Settings
-      #   run: | 
-      #     python redo.py proxy.txt 1 0
-      #     $output = & python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
-      #     Write-Host "Output: $output"
+      - name: Setting up Proxy Settings
+        run: | 
+          python redo.py proxy.txt 1 0
+          $output = & python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
+          Write-Host "Output: $output"
           
-      # - name: Setting up Chrome for Cloudflare bypass
-      #   run: |
-      #     python redo.py chrome.txt 1 0
-      #     $output = & python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
-      #     Write-Host "Output: $output"
+      - name: Setting up Chrome for Cloudflare bypass
+        run: |
+          python redo.py chrome.txt 1 0
+          $output = & python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
+          Write-Host "Output: $output"
           
-      # - name: Perform Click for Verification
-      #   run: |
-      #     python redo.py clicktoverify.txt 20 4
-      #     $output = & python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
-      #     Write-Host "Output: $output"
+      - name: Perform Click for Verification
+        run: |
+          python redo.py clicktoverify.txt 20 4
+          $output = & python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
+          Write-Host "Output: $output"
           
-      # - name: Copy CF_CLEARANCE
-      #   run: |
-      #     python redo.py cpcfclearance.txt 1 0
-      #     $paste =python -c 'import pyperclip; print(pyperclip.paste())'
-      #     Set-ItemProperty -Path "HKCU:\Environment" -Name "CF_CLEARANCE" -Value $paste    
-      #     $output = & python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
-      #     Write-Host "Output: $output"
+      - name: Copy CF_CLEARANCE
+        run: |
+          python redo.py cpcfclearance.txt 1 0
+          $paste =python -c 'import pyperclip; print(pyperclip.paste())'
+          Set-ItemProperty -Path "HKCU:\Environment" -Name "CF_CLEARANCE" -Value $paste    
+          $output = & python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
+          Write-Host "Output: $output"
           
       - name: Running Python Script  
         env:
@@ -84,7 +84,7 @@ jobs:
           DB_TABLE_NAME: ${{secrets.DB_TABLE_NAME}}
           DB_TABLE_NOTIFY: ${{secrets.DB_TABLE_NOTIFY}}
         run: |
-          # $paste = Get-ItemPropertyValue -Path "HKCU:\Environment" -Name "CF_CLEARANCE"
-          # [Environment]::SetEnvironmentVariable("CF_CLEARANCE", $paste, "Process")
-          # echo $env:CF_CLEARANCE
+          $paste = Get-ItemPropertyValue -Path "HKCU:\Environment" -Name "CF_CLEARANCE"
+          [Environment]::SetEnvironmentVariable("CF_CLEARANCE", $paste, "Process")
+          echo $env:CF_CLEARANCE
           python main.py
