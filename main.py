@@ -127,7 +127,7 @@ class Realdiscount:
             }
             cookies={'access_token': self.accesstoken, 'dj_session_id': self.sessionid}
             if os.environ.get('CF_CLEARANCE'): cookies['cf_clearance'] =os.environ['CF_CLEARANCE']
-            result_page =self.request_resource('https://www.udemy.com/payment/checkout-submit/', data=json.dumps(common_data), headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36', 'Content-Type': 'application/json'}, cookies=cookies, method='POST')
+            result_page =self.request_resource('https://www.udemy.com/payment/checkout-submit/', data=json.dumps(common_data), headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36', 'Content-Type': 'application/json'}, cookies=cookies, method='POST')
             result_json =result_page.json()
             if result_json.get('status')=='succeeded':update ='Succeeded'
             else:
@@ -164,12 +164,13 @@ class Realdiscount:
         return date
 
     def make_cache(self, db, db_table, coupon_datas):
-        query =f'insert into {db_table} values'
-        date =self.getreal_date().date()
-        for data in coupon_datas:
-            query+=f''' (null, "{data[0]}", {data[1]}, "{data[2]}", "{data[3]}", {data[4]}, "{date.strftime(r"%Y-%m-%d")}", {'"'+data[5]+'"' if data[6] and data[5] else "null"}, {data[6] if data[6] else "null"}),'''
-        query =query[:-1]
-        return db.query(query)
+        return true
+        # query =f'insert into {db_table} values'
+        # date =self.getreal_date().date()
+        # for data in coupon_datas:
+        #     query+=f''' (null, "{data[0]}", {data[1]}, "{data[2]}", "{data[3]}", {data[4]}, "{date.strftime(r"%Y-%m-%d")}", {'"'+data[5]+'"' if data[6] and data[5] else "null"}, {data[6] if data[6] else "null"}),'''
+        # query =query[:-1]
+        # return db.query(query)
 
     def get_cache(self, db, db_table):
         date =self.getreal_date().date()
@@ -183,7 +184,8 @@ class Realdiscount:
         return []
 
     def realdiscount(self, db, db_table, db_notify):
-        old_coupons =self.get_cache(db, db_table)
+        # old_coupons =self.get_cache(db, db_table)
+        old_coupons =[]
         print('\n> Collecting Offers Pages...\n')
         anger_tags =BeautifulSoup(self.request_resource('https://www.real.discount/articles/').text, 'html.parser').findAll('a')
         article_links, offer_links =[], []
