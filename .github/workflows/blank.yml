@@ -36,28 +36,28 @@ jobs:
         run: | 
           python -m pip install --upgrade pip
           pip install bs4 requests pynput pyautogui pillow pyperclip
-          choco install burp-suite-free-edition wget
+          choco install burp-suite-free-edition curl
 
       - name: Setting up Burpsuite
         run: |
           python redo.py burp.txt 1 0
           $output = & python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
           Write-Host "Output: $output"
-
-      - name: Setting up Trusted Certificates
-        run: |
-          wget burp/cert -o cacert.der
-          $params = @{
-              FilePath = 'cacert.der'
-              CertStoreLocation = 'Cert:\LocalMachine\Root'
-          }
-          Import-Certificate @params
       
       - name: Setting up Proxy Settings
         run: | 
           python redo.py proxy.txt 1 0
           $output = & python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
           Write-Host "Output: $output"
+
+      - name: Setting up Trusted Certificates
+        run: |
+          curl -x http://127.0.0.1:8080 burp/cert -o cacert.der
+          $params = @{
+              FilePath = 'cacert.der'
+              CertStoreLocation = 'Cert:\LocalMachine\Root'
+          }
+          Import-Certificate @params
           
       - name: Setting up Chrome for Cloudflare bypass
         run: |
