@@ -49,6 +49,14 @@ jobs:
           python redo.py proxy.txt 1 0
           $output = & python takescreenshoot.py ${{secrets.FREE_IMAGEKEY}}
           Write-Host "Output: $output"
+      
+      - name: Setting up Trusted Certificates
+        run: |
+          $params = @{
+              FilePath = 'cacert.der'
+              CertStoreLocation = 'Cert:\LocalMachine\Root'
+          }
+          Import-Certificate @params
           
       - name: Setting up Chrome for Cloudflare bypass
         run: |
