@@ -164,7 +164,7 @@ class Realdiscount:
         return date
 
     def make_cache(self, db, db_table, coupon_datas):
-        return true
+        return True
         # query =f'insert into {db_table} values'
         # date =self.getreal_date().date()
         # for data in coupon_datas:
